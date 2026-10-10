@@ -21,6 +21,14 @@ const STARTER = [
   ['core', 'Core / Abs', ['Cable Crunch', 'Hanging Leg Raise', 'Russian Twist', 'Back Extension']],
 ];
 
+// Muscle-group images made in Canva. Groups without one show their initials.
+const GROUP_IMAGES = {
+  chest: 'img/muscles/chest.jpg',
+  back: 'img/muscles/back.jpg',
+  shoulders: 'img/muscles/shoulders.jpg',
+  biceps: 'img/muscles/biceps.jpg',
+};
+
 const DEFAULT_SETTINGS = { restSeconds: 90, autoTimer: true, weightStep: 2.5 };
 
 /* ---------------- state & storage ---------------- */
@@ -134,6 +142,13 @@ function e1rm(s) {
   return s.reps <= 1 ? s.weight : s.weight * (1 + s.reps / 30);
 }
 
+function groupBadge(g) {
+  const src = GROUP_IMAGES[g.id];
+  return src
+    ? `<div class="group-badge has-img"><img src="${src}" alt="" loading="lazy"></div>`
+    : `<div class="group-badge">${esc(initials(g.name))}</div>`;
+}
+
 let toastTimer;
 function toast(msg) {
   const el = $('#toast');
@@ -239,7 +254,7 @@ function renderHome() {
     const sub = `${count} exercise${count === 1 ? '' : 's'}${last ? ` · trained ${fmtAgo(last)}` : ''}`;
     if (editingHome) {
       return `<div class="list-item">
-        <div class="group-badge">${esc(initials(g.name))}</div>
+        ${groupBadge(g)}
         <div class="list-main"><div class="list-title">${esc(g.name)}</div></div>
         <div class="edit-actions">
           <button class="mini-btn" data-action="move-group" data-id="${g.id}" data-dir="-1" ${i === 0 ? 'disabled' : ''} aria-label="Move up">↑</button>
@@ -250,7 +265,7 @@ function renderHome() {
       </div>`;
     }
     return `<button class="list-item" data-action="open-group" data-id="${g.id}">
-      <div class="group-badge">${esc(initials(g.name))}</div>
+      ${groupBadge(g)}
       <div class="list-main">
         <div class="list-title">${esc(g.name)}</div>
         <div class="list-sub">${esc(sub)}</div>
