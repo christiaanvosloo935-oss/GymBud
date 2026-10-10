@@ -1,7 +1,8 @@
 // Bump CACHE when any app file changes so phones pick up the new version.
-const CACHE = 'gymbud-v2';
+const CACHE = 'gymbud-v3';
 const ASSETS = ['./', 'index.html', 'style.css', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png',
-  'img/muscles/chest.jpg', 'img/muscles/back.jpg', 'img/muscles/shoulders.jpg', 'img/muscles/biceps.jpg'];
+  'img/muscles/chest.jpg', 'img/muscles/back.jpg', 'img/muscles/shoulders.jpg', 'img/muscles/biceps.jpg',
+  'img/muscles/triceps.jpg', 'img/muscles/quads.jpg', 'img/muscles/hamstrings.jpg'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
