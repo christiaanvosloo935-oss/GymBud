@@ -21,12 +21,15 @@ const STARTER = [
   ['core', 'Core / Abs', ['Cable Crunch', 'Hanging Leg Raise', 'Russian Twist', 'Back Extension']],
 ];
 
-// Muscle-group images made in Canva. Groups without one show their initials.
+// Muscle-group images. Groups without one show their initials.
 const GROUP_IMAGES = {
   chest: 'img/muscles/chest.jpg',
   back: 'img/muscles/back.jpg',
   shoulders: 'img/muscles/shoulders.jpg',
   biceps: 'img/muscles/biceps.jpg',
+  triceps: 'img/muscles/triceps.jpg',
+  quads: 'img/muscles/quads.jpg',
+  hamstrings: 'img/muscles/hamstrings.jpg',
 };
 
 const DEFAULT_SETTINGS = { restSeconds: 90, autoTimer: true, weightStep: 2.5 };
