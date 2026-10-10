@@ -20,7 +20,9 @@ python3 -m http.server 8000
 
 ### Put it on your phone
 
-1. Host the folder over HTTPS. The easiest way is **GitHub Pages**: repo *Settings → Pages → Deploy from branch*, then pick the branch and `/ (root)`.
+Live app: **https://christiaanvosloo935-oss.github.io/new-repository/** (once Pages is enabled).
+
+1. Host the folder over HTTPS. The easiest way is **GitHub Pages**: repo *Settings → Pages → Deploy from branch*, then pick `main` and `/ (root)`. Pages needs a public repo on GitHub's free plan.
 2. Open the URL on your phone.
    - **iPhone (Safari):** Share → *Add to Home Screen*
    - **Android (Chrome):** ⋮ → *Install app* / *Add to Home screen*
