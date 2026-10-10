@@ -32,6 +32,8 @@ const GROUP_IMAGES = {
   hamstrings: 'img/muscles/hamstrings.jpg',
   calves: 'img/muscles/calves.jpg',
   core: 'img/muscles/core.jpg',
+  forearms: 'img/muscles/forearms.jpg',
+  glutes: 'img/muscles/glutes.jpg',
 };
 
 const DEFAULT_SETTINGS = { restSeconds: 90, autoTimer: true, weightStep: 2.5 };
