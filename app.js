@@ -6,6 +6,7 @@
    ========================================================= */
 
 const STORAGE_KEY = 'gymbud-v1';
+const APP_BUILD = 8; // shown in Settings; keep in step with CACHE in sw.js
 
 const STARTER = [
   ['chest', 'Chest', ['Bench Press', 'Incline Dumbbell Press', 'Chest Fly', 'Push-Up']],
@@ -695,7 +696,7 @@ function renderSettings() {
     <div class="card">
       <button class="btn btn-block btn-danger" data-action="reset">Reset everything</button>
     </div>
-    <p class="help" style="text-align:center">GymBud · ${state.sessions.reduce((n, s) => n + s.sets.length, 0)} sets logged</p>
+    <p class="help" style="text-align:center">GymBud · version ${APP_BUILD} · ${state.sessions.reduce((n, s) => n + s.sets.length, 0)} sets logged</p>
   `;
 }
 
