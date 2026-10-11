@@ -1,39 +1,49 @@
 # GymBud
 
-A simple, offline-first workout logger for your phone.
+A workout logger and calorie tracker for your phone. It works offline and installs to your home screen.
 
-- **Muscle groups**: Chest, Back, Shoulders, Biceps, Triceps, Forearms, Quads, Hamstrings, Glutes, Calves, Core / Abs. You can add, rename, reorder or delete groups.
-- **Exercises**: each group comes with a few starter exercises. Add your own as you go.
-- **Logging**: log multiple sets per exercise (reps and kg) using big +/− steppers. Values are pre-filled from your last session.
-- **Rest timer**: starts automatically after each set, with ±15 s and skip. It vibrates and beeps when time is up.
-- **Progress**: personal records (heaviest weight, estimated 1RM) and a chart of top weight, est. 1RM or volume over time. PRs are tagged in your history.
-- **Your data stays on your phone** (localStorage). Use *Settings → Export data* for backups.
+**Live app:** https://christiaanvosloo935-oss.github.io/GymBud/
 
-## Run it
+Everything is in the **burger menu** (top right): Muscle groups, My workouts, Food, Progress, Profile & goals, Settings & backup.
 
-It's a plain static web app with no build step. Serve the folder with any static host:
+## Workouts
+- **11 muscle groups** with an image each, and starter exercises. Add, rename, reorder or delete groups and exercises.
+- **Log sets** (reps and kg) with big +/− steppers pre-filled from your last session. Tap a logged set to edit it.
+- **Rest timer** that starts after each set (vibrates and beeps when done).
+- **Records and charts** per exercise: heaviest lift, estimated 1RM, and top weight / 1RM / volume over time. PRs are tagged.
+- **My workouts:** build custom workouts (e.g. “Push day”) from specific exercises across any muscle groups, then run them exercise by exercise with a “Next” button.
+
+## Food
+- Daily **calories and macros** (protein, carbs, fat) against your goal, split into Breakfast, Lunch, Dinner and Snacks. Browse previous days.
+- Add food by **searching** the free [Open Food Facts](https://world.openfoodfacts.org) database, **scanning a barcode**, **typing it in**, or using **saved foods and meals**.
+- **Goals are calculated** from your age, height, weight, activity and goal (Mifflin-St Jeor; protein 2 g/kg, fat 25%). You can override them.
+
+## Progress
+Workouts per week and week streak, sets per muscle group this week, weekly volume, calories for the last 14 days against your goal, and recent personal records.
+
+## Your data
+Everything is stored on your phone (localStorage). Use *Settings & backup → Export data* now and then. Searching foods and scanning barcodes need an internet connection; the rest works offline.
+
+## Run it locally
+It's a plain static site with no build step:
 
 ```sh
 python3 -m http.server 8000
 # open http://localhost:8000
 ```
 
-### Put it on your phone
-
-Live app: **https://christiaanvosloo935-oss.github.io/new-repository/** (once Pages is enabled).
-
-1. Host the folder over HTTPS. The easiest way is **GitHub Pages**: repo *Settings → Pages → Deploy from branch*, then pick `main` and `/ (root)`. Pages needs a public repo on GitHub's free plan.
-2. Open the URL on your phone.
-   - **iPhone (Safari):** Share → *Add to Home Screen*
-   - **Android (Chrome):** ⋮ → *Install app* / *Add to Home screen*
-3. It now opens full-screen like a normal app and works offline in the gym.
+## Install on your phone
+Open the live link, then **iPhone (Safari):** Share → *Add to Home Screen*. **Android (Chrome):** ⋮ → *Install app*.
 
 ## Files
-
 | File | Purpose |
 |---|---|
-| `index.html` | App shell |
-| `style.css` | Styles (light theme) |
-| `app.js` | All app logic: data, screens, timer, chart |
-| `sw.js` | Service worker for offline use. Bump `CACHE` when you change files. |
-| `manifest.webmanifest`, `icon*` | Home-screen install metadata and icons |
+| `index.html` | App shell, burger menu, add-food sheet |
+| `style.css` | Styles |
+| `app.js` | Data, muscle groups, exercises, set logger, charts, rest timer, settings |
+| `routines.js` | Custom workouts |
+| `food.js` | Food log, add-food sheet, goals and profile |
+| `progress.js` | Progress page and bar charts |
+| `main.js` | Start-up |
+| `sw.js` | Offline support. Bump `CACHE` when you change files. |
+| `manifest.webmanifest`, `icon*`, `img/` | Install metadata, icons, muscle images |

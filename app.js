@@ -36,7 +36,7 @@ const GROUP_IMAGES = {
   glutes: 'img/muscles/glutes.jpg',
 };
 
-const DEFAULT_SETTINGS = { restSeconds: 90, autoTimer: true, weightStep: 2.5 };
+const DEFAULT_SETTINGS = { restSeconds: 90, autoTimer: true, weightStep: 2.5, goalOverride: null };
 
 /* ---------------- state & storage ---------------- */
 
@@ -53,7 +53,15 @@ function seedState() {
     groups.push({ id, name });
     for (const ex of list) exercises.push({ id: uid(), groupId: id, name: ex });
   }
-  return { version: 1, groups, exercises, sessions: [], settings: { ...DEFAULT_SETTINGS } };
+  return normalize({ version: 1, groups, exercises, sessions: [], settings: { ...DEFAULT_SETTINGS } });
+}
+
+/** Fills in any fields older saves (and backups) don't have yet. */
+function normalize(s) {
+  s.settings = { ...DEFAULT_SETTINGS, ...(s.settings || {}) };
+  for (const key of ['foodLog', 'myFoods', 'meals', 'routines']) if (!Array.isArray(s[key])) s[key] = [];
+  s.profile = s.profile || null;
+  return s;
 }
 
 function isValidState(s) {
@@ -66,8 +74,7 @@ function load() {
     if (raw) {
       const s = JSON.parse(raw);
       if (isValidState(s)) {
-        s.settings = { ...DEFAULT_SETTINGS, ...(s.settings || {}) };
-        return s;
+        return normalize(s);
       }
     }
   } catch (e) { /* fall through to a fresh state */ }
@@ -167,6 +174,8 @@ function toast(msg) {
 
 /* ---------------- queries ---------------- */
 
+let activeRoutineId = null; // set while an exercise is opened from a custom workout
+const getRoutine = (id) => state.routines.find((r) => r.id === id);
 const getGroup = (id) => state.groups.find((g) => g.id === id);
 const getExercise = (id) => state.exercises.find((e) => e.id === id);
 const exercisesOf = (groupId) => state.exercises.filter((e) => e.groupId === groupId);
@@ -207,16 +216,25 @@ function prSetIds(exerciseId) {
 
 function route() {
   const hash = location.hash.replace(/^#\/?/, '');
-  const [page, id] = hash.split('/');
+  const [page, id, rid] = hash.split('/');
   const back = $('#back-btn');
-  const settingsBtn = $('#settings-btn');
   back.hidden = !page;
   if (page !== 'g') editingGroup = false;
   if (page) editingHome = false;
-  settingsBtn.hidden = page === 'settings';
+  if (page !== 'e') editingSet = null;
+  if (page !== 'routine') pickerOpen = false;
+  activeRoutineId = page === 'e' && rid && getRoutine(rid) ? rid : null;
+  closeMenu();
+  markActiveMenuItem(page);
 
   if (page === 'g' && getGroup(id)) renderGroup(id);
   else if (page === 'e' && getExercise(id)) renderExercise(id);
+  else if (page === 'routines') renderRoutines();
+  else if (page === 'routine' && getRoutine(id)) renderRoutineEditor(id);
+  else if (page === 'w' && getRoutine(id)) renderWorkoutRun(id);
+  else if (page === 'food') renderFood();
+  else if (page === 'progress') renderProgress();
+  else if (page === 'profile') renderProfile();
   else if (page === 'settings') renderSettings();
   else renderHome();
   window.scrollTo(0, 0);
@@ -226,17 +244,62 @@ function go(hash) {
   location.hash = hash;
 }
 
+/* ---------------- side menu (burger) ---------------- */
+
+const menuBtn = $('#menu-btn');
+const drawer = $('#drawer');
+const scrim = $('#scrim');
+
+function openMenu() {
+  drawer.inert = false;
+  drawer.classList.add('open');
+  scrim.hidden = false;
+  requestAnimationFrame(() => scrim.classList.add('show'));
+  menuBtn.setAttribute('aria-expanded', 'true');
+  const first = drawer.querySelector('a');
+  if (first) first.focus();
+}
+
+function closeMenu() {
+  if (!drawer.classList.contains('open')) return;
+  drawer.classList.remove('open');
+  drawer.inert = true;
+  scrim.classList.remove('show');
+  setTimeout(() => { if (!drawer.classList.contains('open')) scrim.hidden = true; }, 250);
+  menuBtn.setAttribute('aria-expanded', 'false');
+}
+
+function markActiveMenuItem(page) {
+  const current = { food: 'food', progress: 'progress', profile: 'profile', settings: 'settings', routines: 'routines', routine: 'routines', w: 'routines' }[page] || 'workouts';
+  drawer.querySelectorAll('a').forEach((a) => {
+    a.classList.toggle('active', a.dataset.page === current);
+    if (a.dataset.page === current) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  });
+}
+
+menuBtn.addEventListener('click', () => (drawer.classList.contains('open') ? closeMenu() : openMenu()));
+scrim.addEventListener('click', closeMenu);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+drawer.addEventListener('click', (e) => {
+  const a = e.target.closest('a');
+  // Same page tapped again: hashchange won't fire, so just close.
+  if (a && a.getAttribute('href') === (location.hash || '#/')) closeMenu();
+});
+
 $('#back-btn').addEventListener('click', () => {
   const hash = location.hash.replace(/^#\/?/, '');
-  const [page, id] = hash.split('/');
+  const [page, id, rid] = hash.split('/');
   if (page === 'e') {
     const ex = getExercise(id);
-    go(ex ? `#/g/${ex.groupId}` : '#/');
+    if (rid && getRoutine(rid)) go(`#/w/${rid}`);
+    else go(ex ? `#/g/${ex.groupId}` : '#/');
+  } else if (page === 'routine' || page === 'w') {
+    go('#/routines');
   } else {
     go('#/');
   }
 });
-$('#settings-btn').addEventListener('click', () => go('#/settings'));
 window.addEventListener('hashchange', route);
 
 function setTitle(t) {
@@ -282,6 +345,7 @@ function renderHome() {
   }).join('');
 
   view.innerHTML = `
+    ${routinesHomeHtml()}
     ${todaySets ? `<div class="card small"><b>Today:</b> ${todaySets} set${todaySets === 1 ? '' : 's'} logged. Keep going 💪</div>` : ''}
     <div class="toolbar"><button class="link-btn" data-action="toggle-edit-home">${editingHome ? 'Done' : 'Edit groups'}</button></div>
     <div class="list">${items || '<div class="empty">No muscle groups yet.</div>'}</div>
@@ -341,6 +405,7 @@ function renderGroup(groupId) {
 /* ---------------- exercise: logger, stats, chart, history ---------------- */
 
 let chartMetric = 'top';
+let editingSet = null; // { exerciseId, setId } while a logged set is being edited
 
 function prefillFor(exerciseId) {
   const today = dateKey();
@@ -366,7 +431,10 @@ function renderExercise(exerciseId) {
   const todaySess = sessions.find((s) => s.date === today);
   const prev = sessions.filter((s) => s.date < today).pop();
   const prs = prSetIds(exerciseId);
-  const fill = prefillFor(exerciseId);
+  if (editingSet && editingSet.exerciseId !== exerciseId) editingSet = null;
+  const editing = editingSet ? (todaySessionSets(exerciseId).find((s) => s.id === editingSet.setId) || null) : null;
+  if (editingSet && !editing) editingSet = null;
+  const fill = editing ? { reps: editing.reps, weight: editing.weight } : prefillFor(exerciseId);
 
   // ---- stats
   let best = null;
@@ -383,9 +451,9 @@ function renderExercise(exerciseId) {
 
   const todaySets = todaySess ? todaySess.sets : [];
   const setsHtml = todaySets.map((s, i) => `
-    <div class="set-row">
+    <div class="set-row${editing && editing.id === s.id ? ' editing' : ''}">
       <div class="set-num">${i + 1}</div>
-      <div class="set-val">${esc(fmtSet(s))}${prs.has(s.id) ? '<span class="pr-tag">PR</span>' : ''}</div>
+      <div class="set-val" data-action="edit-set" data-id="${s.id}" role="button" tabindex="0" title="Tap to edit">${esc(fmtSet(s))}${prs.has(s.id) ? '<span class="pr-tag">PR</span>' : ''}</div>
       <button class="set-del" data-action="delete-set" data-id="${s.id}" aria-label="Delete set ${i + 1}">×</button>
     </div>`).join('');
 
@@ -430,7 +498,8 @@ function renderExercise(exerciseId) {
           </div>
         </div>
       </div>
-      <button class="btn btn-primary btn-block log-btn" data-action="log-set" data-id="${exerciseId}">Log set ${todaySets.length + 1}</button>
+      <button class="btn btn-primary btn-block log-btn" data-action="log-set" data-id="${exerciseId}">${editing ? `Update set ${todaySets.findIndex((x) => x.id === editing.id) + 1}` : `Log set ${todaySets.length + 1}`}</button>
+      ${editing ? '<button class="link-btn cancel-edit" data-action="cancel-edit">Cancel editing</button>' : ''}
       ${todaySets.length ? `<div class="sets">${setsHtml}</div>` : ''}
     </div>
 
@@ -462,6 +531,11 @@ function renderExercise(exerciseId) {
   `;
 
   if (sessions.length) drawChart($('#chart'), sessions, chartMetric);
+  if (activeRoutineId) {
+    const nav = routineNavHtml(exerciseId, activeRoutineId);
+    view.insertAdjacentHTML('afterbegin', nav.top);
+    view.insertAdjacentHTML('beforeend', nav.bottom);
+  }
 }
 
 function metricValue(sess, metric) {
@@ -710,10 +784,23 @@ function readNumber(input, { int = false, min = 0 } = {}) {
   return Math.max(min, v);
 }
 
+function todaySessionSets(exerciseId) {
+  const sess = state.sessions.find((x) => x.exerciseId === exerciseId && x.date === dateKey());
+  return sess ? sess.sets : [];
+}
+
 function logSet(exerciseId) {
   const reps = readNumber($('#in-reps'), { int: true, min: 1 });
   const weight = Math.round(readNumber($('#in-weight')) * 100) / 100;
   const today = dateKey();
+
+  if (editingSet) {
+    const target = todaySessionSets(exerciseId).find((x) => x.id === editingSet.setId);
+    if (target) { target.reps = reps; target.weight = weight; save(); toast('Set updated'); }
+    editingSet = null;
+    renderExercise(exerciseId);
+    return;
+  }
 
   let prevMax = null;
   for (const sess of sessionsOf(exerciseId)) for (const s of sess.sets) prevMax = prevMax === null ? s.weight : Math.max(prevMax, s.weight);
@@ -795,6 +882,12 @@ view.addEventListener('click', (evt) => {
       break;
     }
     case 'log-set': logSet(id); break;
+    case 'edit-set':
+      editingSet = { exerciseId: currentRouteId(), setId: id };
+      renderExercise(currentRouteId());
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      break;
+    case 'cancel-edit': editingSet = null; renderExercise(currentRouteId()); break;
     case 'delete-set': {
       for (const sess of state.sessions) {
         const idx = sess.sets.findIndex((s) => s.id === id);
@@ -864,8 +957,7 @@ view.addEventListener('change', (evt) => {
       const data = JSON.parse(reader.result);
       if (!isValidState(data)) throw new Error('bad file');
       if (!confirm('Replace all current data with this backup?')) return;
-      data.settings = { ...DEFAULT_SETTINGS, ...(data.settings || {}) };
-      state = data;
+      state = normalize(data);
       save(); toast('Backup imported'); go('#/');
     } catch (e) {
       toast('That file is not a GymBud backup');
@@ -884,16 +976,4 @@ function exportData() {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-/* ---------------- boot ---------------- */
-
-save(); // persist the starter data on first launch
-route();
-
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
-if (navigator.storage && navigator.storage.persist) {
-  navigator.storage.persist().catch(() => {});
 }
