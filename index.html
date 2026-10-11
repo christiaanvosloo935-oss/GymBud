@@ -19,12 +19,36 @@
       <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
     <h1 id="title">GymBud</h1>
-    <button class="icon-btn" id="settings-btn" aria-label="Settings">
-      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+    <button class="icon-btn" id="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="drawer">
+      <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
     </button>
   </header>
 
+  <div class="scrim" id="scrim" hidden></div>
+  <nav class="drawer" id="drawer" aria-label="Main menu" inert>
+    <div class="drawer-head">GymBud</div>
+    <a href="#/" data-page="workouts"><span class="di" aria-hidden="true">🏋️</span>Muscle groups</a>
+    <a href="#/routines" data-page="routines"><span class="di" aria-hidden="true">📋</span>My workouts</a>
+    <a href="#/food" data-page="food"><span class="di" aria-hidden="true">🍎</span>Food</a>
+    <a href="#/progress" data-page="progress"><span class="di" aria-hidden="true">📈</span>Progress</a>
+    <a href="#/profile" data-page="profile"><span class="di" aria-hidden="true">🎯</span>Profile &amp; goals</a>
+    <a href="#/settings" data-page="settings"><span class="di" aria-hidden="true">⚙️</span>Settings &amp; backup</a>
+  </nav>
+
   <main id="view"></main>
+
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheet-scrim" id="sheet-scrim"></div>
+    <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+      <div class="sheet-head">
+        <h2 id="sheet-title">Add food</h2>
+        <button class="icon-btn" id="sheet-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="sheet-body" id="sheet-body"></div>
+    </div>
+  </div>
 
   <div class="timer" id="timer" hidden>
     <button class="timer-adj" data-adj="-15">−15</button>
@@ -39,5 +63,9 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="app.js"></script>
+  <script src="routines.js"></script>
+  <script src="food.js"></script>
+  <script src="progress.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
