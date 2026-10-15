@@ -7,7 +7,7 @@ A workout logger and calorie tracker for your phone. It works offline and instal
 Everything is in the **burger menu** (top right): Muscle groups, My workouts, Food, Progress, Profile & goals, Settings & backup.
 
 ## Workouts
-- **11 muscle groups** with a realistic shaded icon each (an anatomical figure with the muscle glowing), and starter exercises. Add, rename, reorder or delete groups and exercises.
+- **11 muscle groups** with an anatomical image each (the muscle highlighted), and starter exercises. Add, rename, reorder or delete groups and exercises.
 - **Log sets** (reps and kg) with big +/− steppers pre-filled from your last session. Tap a logged set to edit it.
 - **Rest timer** that starts after each set (vibrates and beeps when done).
 - **Records and charts** per exercise: heaviest lift, estimated 1RM, and top weight / 1RM / volume over time. PRs are tagged.
@@ -40,11 +40,10 @@ Open the live link, then **iPhone (Safari):** Share → *Add to Home Screen*. **
 |---|---|
 | `index.html` | App shell, burger menu, add-food sheet |
 | `style.css` | Styles |
-| `icons.js` | Muscle group icons (shaded SVG; gradients live in `index.html`) |
 | `app.js` | Data, muscle groups, exercises, set logger, charts, rest timer, settings |
 | `routines.js` | Custom workouts |
 | `food.js` | Food log, add-food sheet, goals and profile |
 | `progress.js` | Progress page and bar charts |
 | `main.js` | Start-up |
 | `sw.js` | Offline support. Bump `CACHE` when you change files. |
-| `manifest.webmanifest`, `icon*` | Install metadata and app icon |
+| `manifest.webmanifest`, `icon*`, `img/muscles/` | Install metadata, app icon and muscle group images |
