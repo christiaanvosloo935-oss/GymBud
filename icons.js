@@ -1,97 +1,103 @@
 'use strict';
 
 /* =========================================================
-   Muscle group icons: a simple body figure with the target
-   muscle highlighted and drawn with fibre lines. Pure SVG, so
-   they stay sharp at any size and follow the app colours
-   (see .mi in style.css).
-   Left side is drawn once and mirrored with sym().
-   Classes: bf/bs/bo body, def definition lines, hf/hf2 highlight,
-   fib fibre lines, spine/dot back details.
+   Muscle group icons: a shaded anatomical figure with the target
+   muscle glowing red-orange, drawn as pure SVG so it stays sharp.
+   Gradients and the glow filter live in one shared <svg> in
+   index.html (ids starting "mi-"); colours for lines are in
+   style.css (.mi ...).
+   The left side is drawn once and mirrored with sym().
    ========================================================= */
 
 const sym = (c) => `${c}<g transform="matrix(-1 0 0 1 100 0)">${c}</g>`;
-const line = (x1, y1, x2, y2, cls, w) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${cls}"${w ? ` stroke-width="${w}"` : ''}/>`;
 const path = (d, cls) => `<path d="${d}" class="${cls}"/>`;
-const circ = (x, y, r, cls) => `<circle cx="${x}" cy="${y}" r="${r}" class="${cls}"/>`;
+const line = (x1, y1, x2, y2, cls) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${cls}"/>`;
 const ell = (x, y, rx, ry, cls, rot = 0) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ''} class="${cls}"/>`;
 const rrect = (x, y, w, h, r, cls) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" class="${cls}"/>`;
-/** A thick rounded limb with a slightly darker outline. */
-const limb = (x1, y1, x2, y2, w) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke-width="${w + 1.6}" stroke-linecap="round" class="bo"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke-width="${w}" stroke-linecap="round" class="bs"/>`;
+const curves = (list, cls) => list.map((d) => path(d, cls)).join('');
 
-/** The grey figure. `back` swaps front details (collarbones, abs lines) for back ones (spine, shoulder blades). */
+/** The grey, shaded figure. Front view shows collarbones, ab lines and kneecaps; back view shows the spine, shoulder blades and creases. */
 function figure(back) {
-  const details = back
-    ? [
-      path('M50 31 L50 84', 'spine'),
-      [37, 43, 49, 55, 61, 67, 73, 79].map((y) => circ(50, y, 1.1, 'dot')).join(''),
-      sym(path('M49 31 L39 37', 'def') + path('M38 42 Q45 43 46 52 Q41 56 37 51', 'def') + path('M36 98 Q43 102 49 98', 'def') + line(36.5, 133, 43.5, 133, 'def')),
-    ]
-    : [
-      sym(path('M37 34 Q43 31.5 49 34', 'def') + ell(40, 133, 4.4, 3.6, 'def')),
-      line(50, 46, 50, 80, 'def'),
-      [55, 64, 73].map((y) => line(43.5, y, 56.5, y, 'def')).join(''),
-      circ(50, 78, 1.1, 'dot'),
-    ];
+  const front = !back;
+  const details = front
+    ? sym(curves(['M49.5 33 Q42 31.5 35.5 35', 'M50 55 Q42 58.5 34.5 52.5', 'M36 57 L40 59.5', 'M35.5 62 L39.5 64.5', 'M36 67 L40 69.5', 'M41.4 100 Q42.8 115 43.4 128', 'M37.5 137 Q39.5 155 40.5 172'], 'def') + ell(41.5, 131.8, 3.8, 3.2, 'def') + curves(['M17.5 75 Q19 90 17 103', 'M23 76 Q23.5 90 20.5 103'], 'def')) +
+      line(50, 56, 50, 88, 'def') + [60, 69, 78].map((y) => line(44.5, y, 55.5, y, 'def')).join('') + ell(50, 84, 1, 1.5, 'def')
+    : sym(curves(['M37.5 40 Q45 42 45.5 52 Q40 57 35.5 51 Q34.5 45 37.5 40 Z', 'M33.5 54 Q36.5 68 44.5 77', 'M30 36.5 Q38 33 49 30', 'M36.5 100 Q43 105.5 50 100', 'M41.5 108 Q42.5 118 42 127', 'M38 131.5 Q42 134.5 46 131.5', 'M42 137 Q41 150 41 160', 'M23.5 47 Q27 58 25 68'], 'def')) +
+      path('M50 28 L50 90', 'spine') + line(50, 86, 50, 106, 'def');
+
   return [
-    sym(limb(42, 90, 40, 130, 16) + limb(40, 136, 40, 172, 11) + ell(38, 177, 7, 3.6, 'bf')),
-    sym(limb(25, 40, 20, 70, 11) + limb(20, 73, 17, 104, 9) + ell(16.5, 110, 4.6, 6, 'bf', 8) + ell(21.5, 107, 1.8, 4, 'bf', 14)),
-    limb(50, 24, 50, 30, 6),
-    '<path d="M31 32 Q50 27 69 32 L66 62 Q64 80 58 85 L42 85 Q36 80 34 62 Z" class="bf"/>',
-    sym(circ(28, 36, 8, 'bf')),
-    circ(50, 15, 9, 'bf'),
-    ...details,
+    sym(path('M35.5 88 L50 92 Q48.4 112 46.6 131 Q42 134 37.6 131 Q33.6 112 35.5 88 Z', 'bf')),
+    sym(path('M37.6 131 Q42 134 46.6 131 Q48 145 45.8 156 Q44.2 167 43.2 176 L38.6 176 Q37 165 36 154 Q35.4 142 37.6 131 Z', 'bf') + path('M38.6 176 L43.2 176 L44.2 183 L35 183 Q35 179 38.6 176 Z', 'bf')),
+    sym(path('M17 72 L26.2 72 Q26.4 87 21.4 104 L14.6 104 Q14.8 87 17 72 Z', 'bf') + path('M14.6 104 L21.4 104 Q22.6 112 20.4 118.5 L15.4 118.5 Q13 111 14.6 104 Z', 'bf')),
+    sym(path('M21 40 Q29.6 40 30.2 48 Q29 61 26.2 72 L17 72 Q16.6 56 21 40 Z', 'bf')),
+    path('M44.4 20 L44 28.5 Q38 30.5 29.5 34.5 L70.5 34.5 Q62 30.5 56 28.5 L55.6 20 Z', 'bf'),
+    sym(path('M50 30 L38 31 Q29.5 34 28 41 L31 53 Q33.4 63 36 71 Q37.6 79 36.4 90 L50 92.5 Z', 'bf')),
+    sym(ell(27, 40.5, 7, 10.2, 'bf', 8)),
+    ell(50, 12.5, 8.2, 10.4, 'bf'),
+    details,
   ].join('');
 }
 
-/** Shapes drawn on top of the figure; `box` is the [x, y, size] view window that zooms onto the muscle. */
+const FIB = (cls, list) => curves(list, cls);
+
+/** Highlighted muscles, drawn on top of the figure inside a glow. */
+const hi = (c) => `<g filter="url(#mi-glow)">${c}</g>`;
+
+// `box` is the [x, y, size] window that zooms onto the muscle
 const MUSCLE_ICONS = {
   chest: {
     back: false, box: [10, 4, 80],
-    hi: sym(path('M49.5 38 Q41 33 32 39.5 Q30 49 37 52.5 Q45 53 49.5 47 Z', 'hf') + line(48.5, 41, 34.5, 40.5, 'fib') + line(48.5, 44.5, 33.5, 45.5, 'fib') + line(47.5, 48, 36, 50.5, 'fib')),
+    hi: hi(sym(path('M49.6 36.5 Q41 32.5 33.4 39.5 Q31.2 48.5 37 53.2 Q44.4 55.4 49.6 50.5 Z', 'hf') +
+      FIB('fib', ['M48.6 40 Q41 38.5 34.4 41.5', 'M48.8 44 Q41 43.5 33.6 46.6', 'M48.6 48 Q42 49 36 51']) + FIB('fibd', ['M48.4 42 Q41 41 34 44', 'M48.4 46 Q41.5 46.4 34.6 49']))),
   },
   back: {
     back: true, box: [10, 4, 80],
-    hi: path('M50 30 L65 37 Q68 57 60 69 Q55 75 50 77 Q45 75 40 69 Q32 57 35 37 Z', 'hf')
-      + sym(line(48, 72, 38, 51, 'fib') + line(48, 66, 36.5, 46, 'fib') + line(48, 60, 37, 41.5, 'fib') + line(49, 35, 41, 38, 'fib')) + path('M50 31 L50 80', 'spine-hi'),
+    hi: hi(sym(path('M50 25.5 L44 28.5 Q37.4 31.6 33.4 36.6 L36.4 45.6 Q31.6 58 36.6 72 Q42.6 80.6 50 83.4 Z', 'hf') +
+      FIB('fib', ['M49 31 Q43 34.5 37.4 38', 'M49 38 Q43.4 41 38 46', 'M48.5 71 Q40 63 36.4 52', 'M48.5 78 Q39.5 70 36.6 60']) + FIB('fibd', ['M48.4 46 Q42.6 50 40 56', 'M48.6 63 Q41.6 57 38.6 50']))),
   },
   shoulders: {
     back: false, box: [8, 4, 84],
-    hi: sym(circ(28, 36, 9, 'hf') + path('M26 28.5 Q22.5 36 26 44', 'fib') + path('M29.5 28 Q27 36 30 44.5', 'fib') + path('M33 29.5 Q32 36 34 43', 'fib')),
+    hi: hi(sym(ell(27, 40.5, 7.4, 10.6, 'hf', 8) + FIB('fib', ['M25.5 31.5 Q22.5 40 24.6 50', 'M28.6 31 Q26.6 40 28 50.4', 'M31.6 33 Q31.6 41 31 49'] ) + FIB('fibd', ['M23.4 34 Q21.6 41 22.8 48', 'M30 32 Q29.6 40 29.8 50']))),
   },
   biceps: {
     back: false, box: [6, 12, 88],
-    hi: sym(ell(22.8, 56, 6, 12.5, 'hf', 6.8) + line(24.2, 46.5, 22.4, 65.5, 'fib') + path('M21.6 46 Q19 56 21 66', 'fib') + path('M26.4 47 Q26 57 23.8 66.5', 'fib')),
+    hi: hi(sym(path('M22.2 46 Q29 49 28.2 59 Q26.6 67.5 21.4 70.4 Q17.8 60 19.2 50 Z', 'hf') +
+      FIB('fib', ['M23.2 48 Q25.6 58 22.8 68', 'M26 51 Q27 59 24.4 67.6']) + FIB('fibd', ['M20.6 51.5 Q21 60 21.6 68.6', 'M24.6 49.6 Q26.6 57 24.2 65']))),
   },
   triceps: {
     back: true, box: [6, 12, 88],
-    hi: sym(ell(22.8, 56, 6.4, 12.5, 'hf', 6.8) + path('M24.5 46 Q18.5 52 22.5 59 Q25.5 64 22.5 67', 'fib') + line(22, 47, 20.6, 57, 'fib') + line(25.4, 48, 24.2, 58, 'fib')),
+    hi: hi(sym(path('M20.4 45.5 Q29 47.5 28.8 59.5 Q27.2 69.5 21 71 Q17 58 20.4 45.5 Z', 'hf') +
+      FIB('fib', ['M22.4 47 Q25 57 22.6 69', 'M25.6 49 Q26.8 58 24.6 67']) + FIB('fibd', ['M19.8 52 Q19.8 60 21 69', 'M23.8 48 Q23.8 58 23 68']))),
   },
   forearms: {
     back: false, box: [6, 38, 88],
-    hi: sym(path('M18 75 Q23 72 26.6 76 Q24.4 90 21.8 103 Q19.2 106 16.4 103 Q17 90 18 75 Z', 'hf') + line(21.2, 77.5, 19.4, 100, 'fib') + line(23.6, 79, 21, 100, 'fib')),
+    hi: hi(sym(path('M17.4 73 Q24.2 71.6 26 77 Q24.8 90.5 21.8 103 Q19 105.6 16.2 103 Q15.6 88 17.4 73 Z', 'hf') +
+      FIB('fib', ['M19 76 Q18.4 90 18 102', 'M22.4 76.6 Q21.6 90 20 102']) + FIB('fibd', ['M20.6 75.4 Q20 90 19 102.4', 'M24 78.6 Q23.4 90 21 102']))),
   },
   core: {
     back: false, box: [14, 18, 72],
-    hi: sym(path('M42 50 Q36 60 38.5 76 L42 78 L42 52 Z', 'hf2'))
-      + [47, 57, 67].map((y) => rrect(43, y, 6.3, 8.4, 2.4, 'hf') + rrect(50.7, y, 6.3, 8.4, 2.4, 'hf')).join('')
-      + rrect(43, 76.6, 6.3, 8, 2.4, 'hf') + rrect(50.7, 76.6, 6.3, 8, 2.4, 'hf'),
+    hi: hi(sym(path('M41.6 50 Q35.4 62 37.4 80 Q39 82.6 42 83 L42 52 Z', 'hf2') + FIB('fibd', ['M40.4 54 Q37.4 64 38.4 78'])) +
+      [51, 60.5, 70].map((y) => rrect(43.2, y, 6.2, 8.2, 2.6, 'hf') + rrect(50.6, y, 6.2, 8.2, 2.6, 'hf')).join('') + rrect(43.4, 79.2, 6, 7.2, 2.6, 'hf') + rrect(50.6, 79.2, 6, 7.2, 2.6, 'hf')),
   },
   glutes: {
     back: true, box: [12, 52, 76],
-    hi: sym(ell(43.8, 91, 10, 9, 'hf') + path('M37 85.5 Q43 87 48 95', 'fib') + path('M36.5 91 Q41 92.5 45 99', 'fib') + path('M39 83 Q47 84 50 92', 'fib')),
+    hi: hi(sym(path('M50 85.5 Q38.4 82 35.4 91.6 Q35 102 43 105.4 Q50 104.4 50 96 Z', 'hf') + path('M39 82.4 Q45 80 50 84', 'hf2') +
+      FIB('fib', ['M37.4 88 Q43 89 48 96', 'M36.6 94 Q41 95.6 45 102']) + FIB('fibd', ['M40 85 Q45 87 49 92', 'M38 99 Q42 100.6 46 103.6']))),
   },
   quads: {
     back: false, box: [12, 78, 76],
-    hi: sym(path('M35 96 Q33 112 38.5 126.5 Q42 129.5 45.5 126.5 Q50 112 48.5 96 Q42 91.5 35 96 Z', 'hf') + path('M43.5 96 Q44.5 112 43 125', 'fib') + path('M38.5 100 Q38.2 113 40 124', 'fib')),
+    hi: hi(sym(path('M36.6 94 Q34.2 112 38.6 128 Q42 131 45.6 128.4 Q48.8 112 48.6 98 Q43 92 36.6 94 Z', 'hf') +
+      FIB('fib', ['M42.4 97 Q43.6 112 43 126', 'M38.4 100 Q37.6 113 39.8 125']) + FIB('fibd', ['M45 100 Q46.4 113 44.6 126', 'M40.4 98 Q40.6 112 41.6 126']))),
   },
   hamstrings: {
     back: true, box: [12, 78, 76],
-    hi: sym(path('M35 100 Q33 113 38.5 126.5 Q42 129.5 45.5 126.5 Q50 113 48.5 100 Q42 95.5 35 100 Z', 'hf') + path('M43 101 Q44 114 42.5 125', 'fib') + path('M39 103 Q38.5 114 40 124', 'fib')),
+    hi: hi(sym(path('M36.6 100 Q34.2 113 38.6 128 Q42 131 45.6 128.4 Q48.8 113 48.6 102 Q43 96 36.6 100 Z', 'hf') +
+      FIB('fib', ['M42 102 Q43 114 42.4 126', 'M38.2 104 Q37.4 114 39.6 125']) + FIB('fibd', ['M45 104 Q46 115 44.4 126', 'M40 102 Q40.4 114 41.2 126']))),
   },
   calves: {
     back: true, box: [14, 112, 72],
-    hi: sym(ell(40, 148, 7.2, 13, 'hf') + line(40, 138, 40, 158, 'fib') + path('M36.5 142 Q35.5 149 38 156', 'fib') + path('M43.5 142 Q44.5 149 42 156', 'fib') + line(40, 160, 40, 172, 'def')),
+    hi: hi(sym(path('M37.8 133.4 Q42 136.4 46.4 133.4 Q48.4 146 44.2 158 Q41.2 163 39.6 158.6 Q34.6 146 37.8 133.4 Z', 'hf') +
+      FIB('fib', ['M40.6 138 Q41 148 41 158', 'M38 140.6 Q37.4 148 39 156']) + FIB('fibd', ['M43.4 138.4 Q44.4 148 42.6 157', 'M39.6 138 Q39.2 148 40 158']))),
   },
 };
 

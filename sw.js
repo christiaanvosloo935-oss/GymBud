@@ -1,5 +1,5 @@
 // Bump CACHE when any app file changes so phones pick up the new version.
-const CACHE = 'gymbud-v10';
+const CACHE = 'gymbud-v11';
 const ASSETS = ['./', 'index.html', 'style.css', 'icons.js', 'app.js', 'routines.js', 'food.js', 'progress.js', 'main.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', (e) => {
