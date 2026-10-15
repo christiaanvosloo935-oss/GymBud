@@ -6,7 +6,7 @@
    ========================================================= */
 
 const STORAGE_KEY = 'gymbud-v1';
-const APP_BUILD = 12; // shown in Settings; keep in step with CACHE in sw.js
+const APP_BUILD = 13; // shown in Settings; keep in step with CACHE in sw.js
 
 const STARTER = [
   ['chest', 'Chest', ['Bench Press', 'Incline Dumbbell Press', 'Chest Fly', 'Push-Up']],
