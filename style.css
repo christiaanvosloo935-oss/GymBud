@@ -13,10 +13,6 @@
   --accent-2: #7c3aed;
   --green: #16a34a;
   --orange: #f59e0b;
-  --icon-body: #c3cde0;
-  --icon-spine: #9fb0d0;
-  --icon-line: #a9b6d0;
-  --accent-dark: #1d4ed8;
   --radius: 14px;
   --tap: 48px;
   --safe-b: env(safe-area-inset-bottom, 0px);
@@ -157,15 +153,8 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
   font-weight: 700;
   font-size: 15px;
 }
-.group-badge.has-icon { background: radial-gradient(circle at 50% 30%, #2e3748, #141a26 75%); overflow: hidden; border: 1px solid #0c111b; }
-.mi { display: block; width: 100%; height: 100%; stroke-linecap: round; stroke-linejoin: round; }
-.mi .bf { fill: url(#mi-body); stroke: rgba(8, 12, 20, .55); stroke-width: .7; }
-.mi .def { stroke: rgba(10, 14, 24, .5); stroke-width: .8; fill: none; }
-.mi .spine { stroke: rgba(10, 14, 24, .6); stroke-width: 1.6; fill: none; }
-.mi .hf { fill: url(#mi-hi); stroke: rgba(120, 14, 4, .85); stroke-width: .8; }
-.mi .hf2 { fill: #e8562c; opacity: .6; }
-.mi .fib { stroke: rgba(255, 232, 170, .55); stroke-width: .8; fill: none; }
-.mi .fibd { stroke: rgba(112, 10, 0, .5); stroke-width: .8; fill: none; }
+.group-badge.has-img { background: #141a26; overflow: hidden; }
+.group-badge img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 .edit-actions { display: flex; gap: 4px; flex: none; }
 .mini-btn {

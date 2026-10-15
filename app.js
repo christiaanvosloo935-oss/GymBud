@@ -6,7 +6,7 @@
    ========================================================= */
 
 const STORAGE_KEY = 'gymbud-v1';
-const APP_BUILD = 11; // shown in Settings; keep in step with CACHE in sw.js
+const APP_BUILD = 12; // shown in Settings; keep in step with CACHE in sw.js
 
 const STARTER = [
   ['chest', 'Chest', ['Bench Press', 'Incline Dumbbell Press', 'Chest Fly', 'Push-Up']],
@@ -142,11 +142,12 @@ function e1rm(s) {
   return s.reps <= 1 ? s.weight : s.weight * (1 + s.reps / 30);
 }
 
-/** Muscle icon (see icons.js); groups you add yourself show their initials. */
+const MUSCLE_IMAGES = new Set(['chest', 'back', 'shoulders', 'biceps', 'triceps', 'forearms', 'quads', 'hamstrings', 'glutes', 'calves', 'core']);
+
+/** Muscle image (img/muscles/<id>.jpg); groups you add yourself show their initials. */
 function groupBadge(g) {
-  const icon = muscleIcon(g.id);
-  return icon
-    ? `<div class="group-badge has-icon">${icon}</div>`
+  return MUSCLE_IMAGES.has(g.id)
+    ? `<div class="group-badge has-img"><img src="img/muscles/${g.id}.jpg" alt="" loading="lazy" width="60" height="60"></div>`
     : `<div class="group-badge">${esc(initials(g.name))}</div>`;
 }
 
