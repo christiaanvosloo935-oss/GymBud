@@ -6,7 +6,7 @@
    ========================================================= */
 
 const STORAGE_KEY = 'gymbud-v1';
-const APP_BUILD = 8; // shown in Settings; keep in step with CACHE in sw.js
+const APP_BUILD = 9; // shown in Settings; keep in step with CACHE in sw.js
 
 const STARTER = [
   ['chest', 'Chest', ['Bench Press', 'Incline Dumbbell Press', 'Chest Fly', 'Push-Up']],
@@ -21,21 +21,6 @@ const STARTER = [
   ['calves', 'Calves', ['Standing Calf Raise', 'Seated Calf Raise']],
   ['core', 'Core / Abs', ['Cable Crunch', 'Hanging Leg Raise', 'Russian Twist', 'Back Extension']],
 ];
-
-// Muscle-group images. Groups without one show their initials.
-const GROUP_IMAGES = {
-  chest: 'img/muscles/chest.jpg',
-  back: 'img/muscles/back.jpg',
-  shoulders: 'img/muscles/shoulders.jpg',
-  biceps: 'img/muscles/biceps.jpg',
-  triceps: 'img/muscles/triceps.jpg',
-  quads: 'img/muscles/quads.jpg',
-  hamstrings: 'img/muscles/hamstrings.jpg',
-  calves: 'img/muscles/calves.jpg',
-  core: 'img/muscles/core.jpg',
-  forearms: 'img/muscles/forearms.jpg',
-  glutes: 'img/muscles/glutes.jpg',
-};
 
 const DEFAULT_SETTINGS = { restSeconds: 90, autoTimer: true, weightStep: 2.5, goalOverride: null };
 
@@ -157,10 +142,11 @@ function e1rm(s) {
   return s.reps <= 1 ? s.weight : s.weight * (1 + s.reps / 30);
 }
 
+/** Muscle icon (see icons.js); groups you add yourself show their initials. */
 function groupBadge(g) {
-  const src = GROUP_IMAGES[g.id];
-  return src
-    ? `<div class="group-badge has-img"><img src="${src}" alt="" loading="lazy"></div>`
+  const icon = muscleIcon(g.id);
+  return icon
+    ? `<div class="group-badge has-icon">${icon}</div>`
     : `<div class="group-badge">${esc(initials(g.name))}</div>`;
 }
 

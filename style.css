@@ -13,6 +13,8 @@
   --accent-2: #7c3aed;
   --green: #16a34a;
   --orange: #f59e0b;
+  --icon-body: #c3cde0;
+  --icon-spine: #9fb0d0;
   --radius: 14px;
   --tap: 48px;
   --safe-b: env(safe-area-inset-bottom, 0px);
@@ -153,12 +155,13 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
   font-weight: 700;
   font-size: 15px;
 }
-.group-badge.has-img {
-  background: #fff;
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-.group-badge img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.group-badge.has-icon { background: var(--accent-soft); overflow: hidden; }
+.mi { display: block; width: 100%; height: 100%; }
+.mi .bf { fill: var(--icon-body); }
+.mi .bs { stroke: var(--icon-body); fill: none; }
+.mi .hf { fill: var(--accent); }
+.mi .hs { stroke: var(--accent); fill: none; }
+.mi .spine { stroke: var(--icon-spine); stroke-width: 1.6; stroke-linecap: round; fill: none; }
 
 .edit-actions { display: flex; gap: 4px; flex: none; }
 .mini-btn {
@@ -418,10 +421,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   transition: transform .22s ease;
   z-index: 50;
   padding: calc(env(safe-area-inset-top, 0px) + 12px) 12px 24px;
-  box-shadow: 8px 0 30px rgba(17, 24, 39, .15);
   overflow-y: auto;
 }
-.drawer.open { transform: none; }
+.drawer.open { transform: none; box-shadow: 8px 0 30px rgba(17, 24, 39, .15); }
 .drawer-head { font-size: 22px; font-weight: 800; padding: 10px 12px 14px; color: var(--accent); }
 .drawer a {
   display: flex; align-items: center; gap: 14px;
