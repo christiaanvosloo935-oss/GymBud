@@ -15,6 +15,8 @@
   --orange: #f59e0b;
   --icon-body: #c3cde0;
   --icon-spine: #9fb0d0;
+  --icon-line: #a9b6d0;
+  --accent-dark: #1d4ed8;
   --radius: 14px;
   --tap: 48px;
   --safe-b: env(safe-area-inset-bottom, 0px);
@@ -147,7 +149,7 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 
 .group-badge {
   flex: none;
-  width: 52px; height: 52px;
+  width: 60px; height: 60px;
   border-radius: 12px;
   display: grid; place-items: center;
   background: var(--accent-soft);
@@ -156,12 +158,17 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
   font-size: 15px;
 }
 .group-badge.has-icon { background: var(--accent-soft); overflow: hidden; }
-.mi { display: block; width: 100%; height: 100%; }
-.mi .bf { fill: var(--icon-body); }
+.mi { display: block; width: 100%; height: 100%; stroke-linecap: round; stroke-linejoin: round; }
+.mi .bf { fill: var(--icon-body); stroke: var(--icon-line); stroke-width: .8; }
 .mi .bs { stroke: var(--icon-body); fill: none; }
-.mi .hf { fill: var(--accent); }
-.mi .hs { stroke: var(--accent); fill: none; }
-.mi .spine { stroke: var(--icon-spine); stroke-width: 1.6; stroke-linecap: round; fill: none; }
+.mi .bo { stroke: var(--icon-line); fill: none; }
+.mi .def { stroke: var(--icon-line); stroke-width: .9; fill: none; }
+.mi .dot { fill: var(--icon-spine); }
+.mi .spine { stroke: var(--icon-spine); stroke-width: 1.4; fill: none; }
+.mi .spine-hi { stroke: rgba(255, 255, 255, .55); stroke-width: 1.2; fill: none; }
+.mi .hf { fill: var(--accent); stroke: var(--accent-dark); stroke-width: .9; }
+.mi .hf2 { fill: var(--accent); opacity: .45; }
+.mi .fib { stroke: rgba(255, 255, 255, .55); stroke-width: .9; fill: none; }
 
 .edit-actions { display: flex; gap: 4px; flex: none; }
 .mini-btn {
